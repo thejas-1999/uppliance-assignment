@@ -1,0 +1,37 @@
+body {
+  transition: background 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.counter-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 100vh;
+  text-align: center;
+}
+
+.counter-button {
+  margin: 10px;
+  padding: 12px 24px;
+  font-size: 18px;
+  font-weight: bold;
+  text-transform: uppercase;
+  border-radius: 8px;
+  transition: all 0.3s ease-in-out;
+  border: none;
+  cursor: pointer;
+  background: linear-gradient(45deg, #007bff, #00c6ff);
+  color: white;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.counter-button:hover {
+  background: linear-gradient(45deg, #0056b3, #0084ff);
+  transform: scale(1.05);
+}
+
+.counter-button:active {
+  transform: scale(0.95);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
