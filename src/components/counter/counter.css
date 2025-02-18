@@ -1,14 +1,11 @@
-body {
-  transition: background 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.counter-container {
+.counter-section {
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
   height: 100vh;
   text-align: center;
+  transition: background 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .counter-button {
