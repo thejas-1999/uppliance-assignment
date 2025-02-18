@@ -1,30 +1,50 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Bold, Italic, Underline, List, Save } from "lucide-react";
 import "./textEditor.css";
 
 const TextEditor = () => {
-  const [content, setContent] = useState("");
   const [savedStatus, setSavedStatus] = useState("");
+  const [isBoldActive, setIsBoldActive] = useState(false);
+  const [isItalicActive, setIsItalicActive] = useState(false);
+  const [isUnderlineActive, setIsUnderlineActive] = useState(false);
+  const [isListActive, setIsListActive] = useState(false);
+  const editorRef = useRef(null);
 
   useEffect(() => {
     const savedContent = localStorage.getItem("editorContent");
-    if (savedContent) {
-      setContent(savedContent);
+    if (savedContent && editorRef.current) {
+      editorRef.current.innerHTML = savedContent;
     }
   }, []);
 
-  const handleFormat = (command) => {
+  // Handle text formatting with toggle functionality
+  const handleFormat = (command, toggleStateSetter, currentState) => {
     document.execCommand(command, false, null);
+    toggleStateSetter(!currentState); // Toggle the active state
   };
 
+  // Save the content on every input event
+  const handleInput = () => {
+    if (editorRef.current) {
+      const content = editorRef.current.innerHTML;
+      // Set content back only if there's any change to avoid re-triggering input
+      localStorage.setItem("editorContent", content);
+    }
+  };
+
+  // Save button action
   const handleSave = () => {
-    localStorage.setItem("editorContent", content);
-    setSavedStatus("Content saved!");
-    setTimeout(() => setSavedStatus(""), 2000);
+    if (editorRef.current) {
+      localStorage.setItem("editorContent", editorRef.current.innerHTML);
+      setSavedStatus("Content saved!");
+      setTimeout(() => setSavedStatus(""), 2000);
+    }
   };
 
-  const handleContentChange = (e) => {
-    setContent(e.target.innerHTML);
+  // Dynamic style for active buttons
+  const activeButtonStyle = {
+    backgroundColor: "#3f51b5", // Change to your preferred color
+    color: "white",
   };
 
   return (
@@ -33,30 +53,40 @@ const TextEditor = () => {
         <h2 className="editor-title">Rich Text Editor</h2>
         <div className="editor-toolbar">
           <button
-            onClick={() => handleFormat("bold")}
+            onClick={() => handleFormat("bold", setIsBoldActive, isBoldActive)}
             className="editor-button"
             title="Bold"
+            style={isBoldActive ? activeButtonStyle : {}}
           >
             <Bold className="w-5 h-5" />
           </button>
           <button
-            onClick={() => handleFormat("italic")}
+            onClick={() =>
+              handleFormat("italic", setIsItalicActive, isItalicActive)
+            }
             className="editor-button"
             title="Italic"
+            style={isItalicActive ? activeButtonStyle : {}}
           >
             <Italic className="w-5 h-5" />
           </button>
           <button
-            onClick={() => handleFormat("underline")}
+            onClick={() =>
+              handleFormat("underline", setIsUnderlineActive, isUnderlineActive)
+            }
             className="editor-button"
             title="Underline"
+            style={isUnderlineActive ? activeButtonStyle : {}}
           >
             <Underline className="w-5 h-5" />
           </button>
           <button
-            onClick={() => handleFormat("insertUnorderedList")}
+            onClick={() =>
+              handleFormat("insertUnorderedList", setIsListActive, isListActive)
+            }
             className="editor-button"
             title="Bullet List"
+            style={isListActive ? activeButtonStyle : {}}
           >
             <List className="w-5 h-5" />
           </button>
@@ -70,10 +100,10 @@ const TextEditor = () => {
       </div>
       <div className="p-4">
         <div
+          ref={editorRef}
           className="editor-content"
           contentEditable
-          onInput={handleContentChange}
-          dangerouslySetInnerHTML={{ __html: content }}
+          onInput={handleInput} // Update content while keeping typing intact
         />
       </div>
     </div>
